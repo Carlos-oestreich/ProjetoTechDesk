@@ -1,0 +1,239 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.projetotechdesk.dao;
+
+import com.mycompany.projetotechdesk.Model.Contato;
+import com.mycompany.projetotechdesk.Model.Endereco;
+import com.mycompany.projetotechdesk.Model.Tecnico;
+import com.mycompany.projetotechdesk.database.Conexao;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author carlo
+ */
+public class TecnicoDAO {
+    
+    private Connection con;
+    
+    public void adicionar(Tecnico tecnico, String senha, int idEmpresa) throws SQLException{
+        con = Conexao.getConexao();
+        if (con == null) return;
+        
+        // Procedure nova (sem endereço)
+        String sql = "CALL sp_adicionar_tecnico(?, ?, ?, ?, ?, ? )";
+        PreparedStatement stmt = null;
+        
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idEmpresa);
+            stmt.setString(2, tecnico.getNome());
+            stmt.setString(3, tecnico.getContato().getEmail());
+            stmt.setString(4, tecnico.getContato().getTelefone());
+            stmt.setString(5, tecnico.getEspecialidade()); 
+            stmt.setString(6, senha); // Senha do login
+            
+            stmt.execute();
+        } catch (SQLException e) {
+            System.out.println("ERRO add tecnico: " + e.getMessage());
+            throw e; 
+        } finally {
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        }
+            
+       
+        
+    }
+    
+    
+    //atualizar tecnico
+    public void atualizar(Tecnico tecnico, String senha) throws SQLException {
+        
+        con = Conexao.getConexao();
+        
+        if (con == null) {
+            System.out.println("ERRO DAO: conexao com o banco nula ao atualizar tecnico");
+            return;
+        }
+        
+        String sql = "CALL sp_atualizar_tecnico(?, ?, ?, ?, ?, ?, ?)";
+        PreparedStatement stmt = null;
+        
+        try {
+            stmt = con.prepareStatement(sql);
+            
+            //IDs de referencia
+            stmt.setInt(1, tecnico.getId());
+            stmt.setInt(2, tecnico.getContato().getId());
+            
+            //novos dados do tecnico
+            stmt.setString(3, tecnico.getNome());
+            stmt.setString(4, tecnico.getEspecialidade());
+            
+            //novos dados de contato
+            stmt.setString(5, tecnico.getContato().getEmail());
+            stmt.setString(6, tecnico.getContato().getTelefone());
+            
+            stmt.setString(7, senha);
+
+            
+            stmt.execute();
+            
+        } catch (SQLException e){
+            
+            System.out.println("ERRO, ao tentar atualizar tecnico -> " + e.getMessage());
+            
+        }finally{
+            
+            if (stmt != null){
+                stmt.close();
+            }
+            if (con != null){
+                con.close();
+                System.out.println("Banco fechado com sucesso (atualizar tecnico)");
+            }
+        }
+    }
+    
+    
+    //exclui um tecnico
+    public void excluir(int idTecnico, int idEmpresa) throws SQLException {
+        con = Conexao.getConexao();
+        if (con == null) return;
+        
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // 1. VERIFICA SE TEM O.S. ATIVA (Aberto ou Aberta, Em Andamento)
+            // Usamos LIKE 'Abert%' para pegar tanto "Aberto" quanto "Aberta"
+            String sqlVerifica = "SELECT COUNT(*) FROM tbl_ordens_servico "
+                    + "WHERE id_tecnico = ? AND id_empresa = ? "
+                    + "AND (status LIKE 'Aberta' OR status = 'Em andamento')";
+            
+            stmt = con.prepareStatement(sqlVerifica);
+            stmt.setInt(1, idTecnico);
+            stmt.setInt(2, idEmpresa);
+            rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                int pendencias = rs.getInt(1);
+                if (pendencias > 0) {
+                    throw new SQLException("Este técnico possui " + pendencias + " O.S. ativas.\n"
+                            + "Transfira ou conclua as ordens antes de excluir.");
+                }
+            }
+            rs.close();
+            stmt.close();
+            
+            // 2. DESVINCULAR O.S. ANTIGAS (Concluídas/Canceladas)
+            // Precisamos setar o técnico como NULL nessas O.S. para o banco deixar apagar o técnico
+            String sqlDesvincular = "UPDATE tbl_ordens_servico SET id_tecnico = NULL WHERE id_tecnico = ?";
+            stmt = con.prepareStatement(sqlDesvincular);
+            stmt.setInt(1, idTecnico);
+            stmt.executeUpdate();
+            stmt.close();
+            
+            // 3. BUSCA O ID DO CONTATO (Para apagar o login)
+            String sqlBuscaContato = "SELECT id_contato FROM tbl_tecnicos WHERE id = ?";
+            stmt = con.prepareStatement(sqlBuscaContato);
+            stmt.setInt(1, idTecnico);
+            rs = stmt.executeQuery();
+            
+            int idContato = 0;
+            if (rs.next()) {
+                idContato = rs.getInt("id_contato");
+            }
+            rs.close();
+            stmt.close();
+            
+            // 4. EXCLUI O USUÁRIO DE LOGIN
+            if (idContato > 0) {
+                String sqlDelUser = "DELETE FROM tbl_usuarios WHERE id_contato = ?";
+                stmt = con.prepareStatement(sqlDelUser);
+                stmt.setInt(1, idContato);
+                stmt.executeUpdate();
+                stmt.close();
+            }
+
+            // 5. EXCLUI O TÉCNICO
+            String sqlDelTec = "DELETE FROM tbl_tecnicos WHERE id = ? AND id_empresa = ?";
+            stmt = con.prepareStatement(sqlDelTec);
+            stmt.setInt(1, idTecnico);
+            stmt.setInt(2, idEmpresa);
+            stmt.executeUpdate();
+            
+        } catch (SQLException e){
+            System.out.println("ERRO ao deletar tecnico -> " + e.getMessage());
+            throw e; // Repassa o erro para a tela
+        } finally{
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        }
+    }
+    
+    
+    //Listar todos os tecnicos de uma empresa especifica
+    public List<Tecnico> listarTodos(int idEmpresa) throws SQLException{
+
+
+        con = Conexao.getConexao();
+
+        if (con == null) {
+            System.out.println("ERRO DAO: Conexão com o banco nula ao tentar listar técnicos.");
+            return new ArrayList<>();
+        }
+
+        String sql = "SELECT "
+                + "t.id AS tecnico_id, t.nome, t.especialidade, "
+                + "ct.id AS contato_id, ct.email, ct.telefone "
+                + "FROM tbl_tecnicos t "
+                + "LEFT JOIN tbl_contatos ct ON t.id_contato = ct.id "
+                + "WHERE t.id_empresa = ?";
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<Tecnico> tecnicos = new ArrayList<>();
+
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idEmpresa);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Contato contato = new Contato();
+                contato.setId(rs.getInt("contato_id"));
+                contato.setEmail(rs.getString("email"));
+                contato.setTelefone(rs.getString("telefone"));
+
+                Tecnico tecnico = new Tecnico();
+                tecnico.setId(rs.getInt("tecnico_id"));
+                tecnico.setNome(rs.getString("nome"));
+                tecnico.setEspecialidade(rs.getString("especialidade"));
+                tecnico.setContato(contato);
+
+                tecnicos.add(tecnico);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("ERRO ao listar técnicos -> " + e.getMessage());
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        }
+
+        return tecnicos;
+    }
+    
+    
+}
