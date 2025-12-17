@@ -278,7 +278,7 @@ public class OrdemServicoDAO {
             return new double[]{0, 0, 0, 0, 0};
         }
         
-        double[] resultados = new double[5];
+        double[] resultados = new double[6];
         PreparedStatement stmt = null;
         ResultSet rs = null;
         
@@ -295,7 +295,7 @@ public class OrdemServicoDAO {
             stmt.close();
             
             //Total Em Andamento
-            String sql2 = "SELECT COUNT(*) FROM tbl_ordens_servico WHERE id_empresa = ? AND status = 'Em andamento'";
+            String sql2 = "SELECT COUNT(*) FROM tbl_ordens_servico WHERE id_empresa = ? AND status = 'Em Andamento'";
             stmt = con.prepareStatement(sql2);
             stmt.setInt(1, idEmpresa);
             rs = stmt.executeQuery();
@@ -335,6 +335,21 @@ public class OrdemServicoDAO {
             if (rs.next()) {
                 resultados[4] = rs.getDouble(1);
             }
+            rs.close();
+            stmt.close();
+            
+            // Total Canceladas
+            String sql6 = "SELECT COUNT(*) FROM tbl_ordens_servico WHERE id_empresa = ? AND status = 'Cancelada'";
+            stmt = con.prepareStatement(sql6);
+            stmt.setInt(1, idEmpresa);
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                resultados[5] = rs.getInt(1);
+            }
+            rs.close();
+            stmt.close();
+
+            
             
         } catch (SQLException e) {
             System.out.println("ERRO DAO Relatorio: " + e.getMessage());

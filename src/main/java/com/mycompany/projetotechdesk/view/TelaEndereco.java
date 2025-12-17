@@ -19,8 +19,7 @@ public class TelaEndereco extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(TelaEndereco.class.getName());
     
-    private int idDono;
-    private String tipoDono; // "CLIENTE" ou "TECNICO"
+    private int idUsuario;
     private String nomeDono;
     private String enderecoSelecionado = null;
     private EnderecoDAO dao = new EnderecoDAO();
@@ -37,8 +36,7 @@ public class TelaEndereco extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null); 
         this.setResizable(false); 
-        this.idDono = id;
-        this.tipoDono = tipo;
+        this.idUsuario = id;
         this.nomeDono = nome;
         
         
@@ -308,7 +306,7 @@ public class TelaEndereco extends javax.swing.JFrame {
                 e.setEstado(cbxEstado.getSelectedItem().toString());
                 e.setCep(txtCep.getText());
 
-                dao.adicionar(e, idDono, tipoDono);
+                dao.adicionar(e, idUsuario);
 
                 JOptionPane.showMessageDialog(null, "Endereço salvo com sucesso!");
             }else{
@@ -473,7 +471,7 @@ public class TelaEndereco extends javax.swing.JFrame {
 
     private void atualizarTabela() {
         try {
-            List<Endereco> lista = dao.listarPorDono(idDono, tipoDono);
+            List<Endereco> lista = dao.listarPorUsuario(idUsuario);
 
             DefaultTableModel model = new DefaultTableModel(
                 new String[]{

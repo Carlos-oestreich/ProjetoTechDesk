@@ -13,19 +13,18 @@ public class EnderecoDAO {
     private Connection con;
 
     // Adicionar Endereço
-    public void adicionar(Endereco end, int idDono, String tipoDono) throws SQLException {
+    public void adicionar(Endereco end, int idUsuario) throws SQLException {
         con = Conexao.getConexao();
-        if(con == null) return;
-        
-        // Define qual coluna de ID usar baseada no tipo (CLIENTE ou TECNICO)
-        String colunaId = "id_cliente"; // Padrão
-        if(tipoDono.equals("TECNICO")) colunaId = "id_tecnico";
-        
-        String sql = "INSERT INTO tbl_enderecos (" + colunaId + ", descricao, logradouro, numero, bairro, cidade, estado, cep) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement stmt = null;
-        try {
-            stmt = con.prepareStatement(sql);
-            stmt.setInt(1, idDono);
+        if (con == null) return;
+
+        String sql = """
+            INSERT INTO tbl_enderecos
+            (id_usuario, descricao, logradouro, numero, bairro, cidade, estado, cep)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """;
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, idUsuario);
             stmt.setString(2, end.getDescricao());
             stmt.setString(3, end.getLogradouro());
             stmt.setString(4, end.getNumero());
@@ -35,10 +34,10 @@ public class EnderecoDAO {
             stmt.setString(8, end.getCep());
             stmt.execute();
         } finally {
-            if(stmt!=null) stmt.close();
-            if(con!=null) con.close();
+            con.close();
         }
     }
+
 
     // Atualizar Endereço
     public void atualizar(Endereco end) throws SQLException {
@@ -79,21 +78,21 @@ public class EnderecoDAO {
     }
 
     // Listar Endereços de uma Pessoa
-    public List<Endereco> listarPorDono(int idDono, String tipoDono) throws SQLException {
+    public List<Endereco> listarPorUsuario(int idUsuario) throws SQLException {
         con = Conexao.getConexao();
-        if(con == null) return new ArrayList<>();
-        
-        String colunaId = "id_cliente";
-        if(tipoDono.equals("TECNICO")) colunaId = "id_tecnico";
-        
+        if (con == null) return new ArrayList<>();
+
         List<Endereco> lista = new ArrayList<>();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        try {
-            stmt = con.prepareStatement("SELECT * FROM tbl_enderecos WHERE " + colunaId + " = ?");
-            stmt.setInt(1, idDono);
-            rs = stmt.executeQuery();
-            while(rs.next()) {
+
+        String sql = "SELECT * FROM tbl_enderecos WHERE id_usuario = ?";
+
+        try (
+            PreparedStatement stmt = con.prepareStatement(sql)
+        ) {
+            stmt.setInt(1, idUsuario);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
                 Endereco e = new Endereco();
                 e.setId(rs.getInt("id"));
                 e.setDescricao(rs.getString("descricao"));
@@ -106,10 +105,9 @@ public class EnderecoDAO {
                 lista.add(e);
             }
         } finally {
-            if(rs!=null) rs.close();
-            if(stmt!=null) stmt.close();
-            if(con!=null) con.close();
+            con.close();
         }
         return lista;
     }
+
 }

@@ -57,7 +57,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
-                          <Component id="jTabbedPane1" pref="1260" max="32767" attributes="0"/>
+                          <Component id="jTabbedPane1" pref="1288" max="32767" attributes="0"/>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -475,8 +475,8 @@
                           <Component id="roundedPanel3" min="-2" pref="461" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="roundedPanel6" pref="626" max="32767" attributes="0"/>
-                              <Component id="jScrollPane1" pref="626" max="32767" attributes="0"/>
+                              <Component id="roundedPanel6" pref="654" max="32767" attributes="0"/>
+                              <Component id="jScrollPane1" pref="654" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -812,7 +812,7 @@
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace pref="9" max="32767" attributes="0"/>
+                          <EmptySpace pref="37" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1096,9 +1096,9 @@
                         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                           <StringArray count="4">
                             <StringItem index="0" value="Aberta"/>
-                            <StringItem index="1" value="Em andamento"/>
+                            <StringItem index="1" value="Em Andamento"/>
                             <StringItem index="2" value="Concluida"/>
-                            <StringItem index="3" value="Cancelado"/>
+                            <StringItem index="3" value="Cancelada"/>
                           </StringArray>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" value="Selecione o Status"/>
@@ -1378,7 +1378,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="roundedPanel2" alignment="0" pref="1099" max="32767" attributes="0"/>
+                      <Component id="roundedPanel2" alignment="0" pref="1127" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -1419,38 +1419,53 @@
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="roundedPanel12" alignment="0" min="-2" pref="212" max="-2" attributes="0"/>
                                           <Component id="roundedPanel11" alignment="0" min="-2" pref="212" max="-2" attributes="0"/>
+                                          <Component id="roundedPanel14" min="-2" pref="212" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
-                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                              <Component id="jpanelGrafico" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="163" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="panelGraficoTotalStatus" max="32767" attributes="0"/>
+                                  <Component id="panelGraficoTotalValor" max="32767" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="163" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jpanelGrafico" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                       <Component id="jLabel7" min="-2" pref="52" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="roundedPanel11" min="-2" pref="161" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Component id="roundedPanel14" min="-2" pref="161" max="-2" attributes="0"/>
                                           <Component id="roundedPanel9" min="-2" pref="161" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="roundedPanel7" min="-2" pref="161" max="-2" attributes="0"/>
-                                          <Component id="roundedPanel12" min="-2" pref="161" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="roundedPanel7" min="-2" pref="161" max="-2" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="roundedPanel10" min="-2" pref="161" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="1" attributes="0">
+                                              <Component id="roundedPanel11" min="-2" pref="161" max="-2" attributes="0"/>
+                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                              <Component id="roundedPanel12" min="-2" pref="161" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="roundedPanel10" min="-2" pref="161" max="-2" attributes="0"/>
+                                      <Component id="panelGraficoTotalStatus" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="panelGraficoTotalValor" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="23" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -1736,7 +1751,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="1" attributes="0">
                                       <Component id="lblValorPendente" min="-2" pref="172" max="-2" attributes="0"/>
                                       <Component id="jLabel18" min="-2" pref="166" max="-2" attributes="0"/>
                                   </Group>
@@ -1799,17 +1814,97 @@
                         <Property name="text" type="java.lang.String" value="Relat&#xf3;rio Mensal de Ordens de Servi&#xe7;o"/>
                       </Properties>
                     </Component>
-                    <Container class="javax.swing.JPanel" name="jpanelGrafico">
+                    <Container class="javax.swing.JPanel" name="panelGraficoTotalStatus">
 
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="581" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="322" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="569" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="302" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                    </Container>
+                    <Container class="Componentes.RoundedPanel" name="roundedPanel14">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="33" red="cc" type="rgb"/>
+                        </Property>
+                        <Property name="shadowSize" type="int" value="5"/>
+                      </Properties>
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel19" alignment="0" min="-2" pref="165" max="-2" attributes="0"/>
+                                      <Component id="lblTotalCanceladas" alignment="0" min="-2" pref="172" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="18" max="32767" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="jLabel19" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="lblTotalCanceladas" pref="107" max="32767" attributes="0"/>
+                                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                        </DimensionLayout>
+                      </Layout>
+                      <SubComponents>
+                        <Component class="javax.swing.JLabel" name="jLabel19">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Segoe UI" size="14" style="1"/>
+                            </Property>
+                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                            </Property>
+                            <Property name="text" type="java.lang.String" value="O.S Canceladas"/>
+                          </Properties>
+                        </Component>
+                        <Component class="javax.swing.JLabel" name="lblTotalCanceladas">
+                          <Properties>
+                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                              <Font name="Segoe UI" size="24" style="0"/>
+                            </Property>
+                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                            </Property>
+                            <Property name="horizontalAlignment" type="int" value="0"/>
+                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                              <Border info="org.netbeans.modules.form.compat2.border.LineBorderInfo">
+                                <LineBorder>
+                                  <Color PropertyName="color" blue="0" green="cc" red="cc" type="rgb"/>
+                                </LineBorder>
+                              </Border>
+                            </Property>
+                          </Properties>
+                        </Component>
+                      </SubComponents>
+                    </Container>
+                    <Container class="javax.swing.JPanel" name="panelGraficoTotalValor">
+
+                      <Layout>
+                        <DimensionLayout dim="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                          </Group>
+                        </DimensionLayout>
+                        <DimensionLayout dim="1">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <EmptySpace min="0" pref="290" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>

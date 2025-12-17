@@ -111,7 +111,7 @@ public class ClienteDAO {
                 Cliente cliente = new Cliente();
                 cliente.setId(rs.getInt("id"));
                 cliente.setNome(rs.getString("nome"));
-                cliente.setCpf(rs.getString("cpf"));
+                
                 cliente.setContato(contato);
                 // O endereço NÃO é carregado aqui. Será carregado na tela de clique duplo.
                 
@@ -126,4 +126,55 @@ public class ClienteDAO {
         }
         return clientes;
     }
+    
+    public Cliente buscarPorId(int idCliente) throws SQLException {
+        con = Conexao.getConexao();
+        if (con == null) return null;
+
+        String sql = """
+            SELECT 
+                c.id,
+                c.nome,
+                c.cpf,
+                ct.id AS id_contato,
+                ct.email,
+                ct.telefone
+            FROM tbl_clientes c
+            LEFT JOIN tbl_contatos ct ON c.id_contato = ct.id
+            WHERE c.id = ?
+        """;
+
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, idCliente);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                Contato contato = new Contato();
+                contato.setId(rs.getInt("id_contato"));
+                contato.setEmail(rs.getString("email"));
+                contato.setTelefone(rs.getString("telefone"));
+
+                Cliente cliente = new Cliente();
+                cliente.setId(rs.getInt("id"));
+                cliente.setNome(rs.getString("nome"));
+                cliente.setCpf(rs.getString("cpf")); 
+                cliente.setContato(contato);
+
+                return cliente;
+            }
+        } catch (SQLException e) {
+            System.out.println("ERRO buscar cliente: " + e.getMessage());
+            throw e;
+        } finally {
+            if (rs != null) rs.close();
+            if (stmt != null) stmt.close();
+            if (con != null) con.close();
+        }
+        return null;
+    }
+
 }

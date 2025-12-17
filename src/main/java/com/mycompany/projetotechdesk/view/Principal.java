@@ -15,6 +15,7 @@ import com.mycompany.projetotechdesk.dao.OrdemServicoDAO;
 import com.mycompany.projetotechdesk.dao.TecnicoDAO;
 import com.mycompany.projetotechdesk.database.Conexao;
 import com.mycompany.projetotechdesk.util.RelatorioUtil;
+import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -54,7 +55,8 @@ public class Principal extends javax.swing.JFrame {
         atualizarTabelaClientes();
         atualizarTabelaTecnico();
         atualizarRelatorios();
-        gerarGraficoPizza();
+        gerarGraficoStatusOS();
+        gerarGraficoValoresOS();
         
     }
     
@@ -69,6 +71,10 @@ public class Principal extends javax.swing.JFrame {
     private OrdemServico osSelecionada = null;
     private Cliente clienteSelecionado = null;
     private Tecnico tecnicoSelecionado = null;
+    
+    private double valorTotalOS = 0;
+    private double valorPendenteOS = 0;
+
     
     
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -95,7 +101,8 @@ public class Principal extends javax.swing.JFrame {
             atualizarTabelaClientes();
             atualizarTabelaTecnico();
             atualizarRelatorios();
-            gerarGraficoPizza();
+            gerarGraficoStatusOS();
+            gerarGraficoValoresOS();
             
         } catch (Exception e){
             JOptionPane.showMessageDialog(this, "ERRO ao carregar dados: " + e.getMessage()); 
@@ -203,7 +210,11 @@ public class Principal extends javax.swing.JFrame {
         jLabel18 = new javax.swing.JLabel();
         lblValorPendente = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        jpanelGrafico = new javax.swing.JPanel();
+        panelGraficoTotalStatus = new javax.swing.JPanel();
+        roundedPanel14 = new Componentes.RoundedPanel();
+        jLabel19 = new javax.swing.JLabel();
+        lblTotalCanceladas = new javax.swing.JLabel();
+        panelGraficoTotalValor = new javax.swing.JPanel();
         btnFechar = new Componentes.IconButton();
         btnMinimizar = new Componentes.IconButton();
         btnSair = new Componentes.RoundedButton();
@@ -608,8 +619,8 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(roundedPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(imagePanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(roundedPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE))
+                    .addComponent(roundedPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE))
                 .addContainerGap())
         );
         imagePanel3Layout.setVerticalGroup(
@@ -658,7 +669,7 @@ public class Principal extends javax.swing.JFrame {
         jLabel25.setForeground(new java.awt.Color(8, 118, 132));
         jLabel25.setText("Status:");
 
-        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aberta", "Em andamento", "Concluida", "Cancelado" }));
+        cbxStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Aberta", "Em Andamento", "Concluida", "Cancelada" }));
         cbxStatus.setToolTipText("Selecione o Status");
 
         jLabel26.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
@@ -922,7 +933,7 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(imagePanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
         imagePanel4Layout.setVerticalGroup(
             imagePanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1107,7 +1118,7 @@ public class Principal extends javax.swing.JFrame {
             roundedPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel12Layout.createSequentialGroup()
                 .addGap(14, 14, 14)
-                .addGroup(roundedPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(roundedPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(lblValorPendente, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel18, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(16, Short.MAX_VALUE))
@@ -1126,15 +1137,59 @@ public class Principal extends javax.swing.JFrame {
         jLabel7.setForeground(new java.awt.Color(102, 102, 102));
         jLabel7.setText("Relatório Mensal de Ordens de Serviço");
 
-        javax.swing.GroupLayout jpanelGraficoLayout = new javax.swing.GroupLayout(jpanelGrafico);
-        jpanelGrafico.setLayout(jpanelGraficoLayout);
-        jpanelGraficoLayout.setHorizontalGroup(
-            jpanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 581, Short.MAX_VALUE)
+        javax.swing.GroupLayout panelGraficoTotalStatusLayout = new javax.swing.GroupLayout(panelGraficoTotalStatus);
+        panelGraficoTotalStatus.setLayout(panelGraficoTotalStatusLayout);
+        panelGraficoTotalStatusLayout.setHorizontalGroup(
+            panelGraficoTotalStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 322, Short.MAX_VALUE)
         );
-        jpanelGraficoLayout.setVerticalGroup(
-            jpanelGraficoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 569, Short.MAX_VALUE)
+        panelGraficoTotalStatusLayout.setVerticalGroup(
+            panelGraficoTotalStatusLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 302, Short.MAX_VALUE)
+        );
+
+        roundedPanel14.setBackground(new java.awt.Color(204, 51, 0));
+        roundedPanel14.setShadowSize(5);
+
+        jLabel19.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel19.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel19.setText("O.S Canceladas");
+
+        lblTotalCanceladas.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lblTotalCanceladas.setForeground(new java.awt.Color(255, 255, 255));
+        lblTotalCanceladas.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTotalCanceladas.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 0)));
+
+        javax.swing.GroupLayout roundedPanel14Layout = new javax.swing.GroupLayout(roundedPanel14);
+        roundedPanel14.setLayout(roundedPanel14Layout);
+        roundedPanel14Layout.setHorizontalGroup(
+            roundedPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundedPanel14Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(roundedPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTotalCanceladas, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(18, Short.MAX_VALUE))
+        );
+        roundedPanel14Layout.setVerticalGroup(
+            roundedPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(roundedPanel14Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel19)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTotalCanceladas, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                .addGap(12, 12, 12))
+        );
+
+        javax.swing.GroupLayout panelGraficoTotalValorLayout = new javax.swing.GroupLayout(panelGraficoTotalValor);
+        panelGraficoTotalValor.setLayout(panelGraficoTotalValorLayout);
+        panelGraficoTotalValorLayout.setHorizontalGroup(
+            panelGraficoTotalValorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        panelGraficoTotalValorLayout.setVerticalGroup(
+            panelGraficoTotalValorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 290, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout roundedPanel2Layout = new javax.swing.GroupLayout(roundedPanel2);
@@ -1155,37 +1210,48 @@ public class Principal extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(roundedPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(roundedPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(33, 33, 33)
-                .addComponent(jpanelGrafico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                            .addComponent(roundedPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(163, 163, 163)
+                .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(panelGraficoTotalStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(panelGraficoTotalValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(163, Short.MAX_VALUE))
         );
         roundedPanel2Layout.setVerticalGroup(
             roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(roundedPanel2Layout.createSequentialGroup()
-                .addGap(18, 18, 18)
                 .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jpanelGrafico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(roundedPanel2Layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(roundedPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(roundedPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(roundedPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(roundedPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
+                                .addComponent(roundedPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(roundedPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel2Layout.createSequentialGroup()
+                                .addComponent(roundedPanel11, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(roundedPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(roundedPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panelGraficoTotalStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(roundedPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                        .addComponent(panelGraficoTotalValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout imagePanel6Layout = new javax.swing.GroupLayout(imagePanel6);
         imagePanel6.setLayout(imagePanel6Layout);
         imagePanel6Layout.setHorizontalGroup(
             imagePanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1099, Short.MAX_VALUE)
+            .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1127, Short.MAX_VALUE)
         );
         imagePanel6Layout.setVerticalGroup(
             imagePanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1235,7 +1301,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(imagePanel1Layout.createSequentialGroup()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1260, Short.MAX_VALUE)
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1288, Short.MAX_VALUE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(imagePanel1Layout.createSequentialGroup()
                         .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1308,9 +1374,10 @@ public class Principal extends javax.swing.JFrame {
             try {
                 osDAO.excluir(idOS, usuarioLogado.getEmpresa().getId());
                 atualizarTabelaOS();
-                limparFormulariosOS();
+                limparFormulariosOS(); 
                 atualizarRelatorios();
-                gerarGraficoPizza();
+                gerarGraficoStatusOS();
+                gerarGraficoValoresOS();
                 JOptionPane.showMessageDialog(this, "Excluido.");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "ERRO: " + e.getMessage());
@@ -1435,7 +1502,8 @@ public class Principal extends javax.swing.JFrame {
             limparFormulariosOS();
             atualizarTabelaOS();
             atualizarRelatorios();
-            gerarGraficoPizza();
+            gerarGraficoStatusOS();
+            gerarGraficoValoresOS();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ERRO: " + e.getMessage());
@@ -1665,20 +1733,22 @@ public class Principal extends javax.swing.JFrame {
         }
 
         try {
-            clienteSelecionado = listaClientes.get(linha);
+            int idCliente = (int) tblCliente.getValueAt(linha, 0);
+
+            ClienteDAO clienteDAO = new ClienteDAO();
+            clienteSelecionado = clienteDAO.buscarPorId(idCliente);
 
             txtNomeCliente.setText(clienteSelecionado.getNome());
-            txtCpfCliente.setText(clienteSelecionado.getCpf());
+            txtCpfCliente.setText(clienteSelecionado.getCpf()); 
             txtEmailCliente.setText(clienteSelecionado.getContato().getEmail());
             txtTelefoneCliente.setText(clienteSelecionado.getContato().getTelefone());
-
-            // NÃO CARREGA MAIS ENDEREÇO AQUI
 
             btnSalvarCliente.setText("Atualizar");
 
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Erro: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Erro ao carregar cliente: " + e.getMessage());
         }
+
     }//GEN-LAST:event_btnEditarClienteActionPerformed
 
     private void btnSalvarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarClienteActionPerformed
@@ -1805,6 +1875,7 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
@@ -1829,19 +1900,22 @@ public class Principal extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JPanel jpanelGrafico;
     private javax.swing.JLabel lblTotalAbertas;
     private javax.swing.JLabel lblTotalAndamento;
+    private javax.swing.JLabel lblTotalCanceladas;
     private javax.swing.JLabel lblTotalConcluidas;
     private javax.swing.JLabel lblValorPendente;
     private javax.swing.JLabel lblValorTotal;
     private Componentes.MaterialTableBeanInfo materialTableBeanInfo1;
+    private javax.swing.JPanel panelGraficoTotalStatus;
+    private javax.swing.JPanel panelGraficoTotalValor;
     private javax.swing.JPasswordField pwdSenhaTecnico;
     private Componentes.RoundedPanel roundedPanel1;
     private Componentes.RoundedPanel roundedPanel10;
     private Componentes.RoundedPanel roundedPanel11;
     private Componentes.RoundedPanel roundedPanel12;
     private Componentes.RoundedPanel roundedPanel13;
+    private Componentes.RoundedPanel roundedPanel14;
     private Componentes.RoundedPanel roundedPanel2;
     private Componentes.RoundedPanel roundedPanel3;
     private Componentes.RoundedPanel roundedPanel5;
@@ -2026,9 +2100,13 @@ public class Principal extends javax.swing.JFrame {
             lblTotalAbertas.setText(String.valueOf((int)dados[0]));
             lblTotalAndamento.setText(String.valueOf((int)dados[1]));
             lblTotalConcluidas.setText(String.valueOf((int)dados[2]));
+            lblTotalCanceladas.setText(String.valueOf((int) dados[5]));
             
-            lblValorTotal.setText(nf.format(dados[3]));
-            lblValorPendente.setText(nf.format(dados[4]));
+            valorTotalOS = dados[3];
+            valorPendenteOS = dados[4];
+            
+            lblValorTotal.setText(nf.format(valorTotalOS));
+            lblValorPendente.setText(nf.format(valorPendenteOS));
             
         } catch (Exception e) {
             System.out.println("ERRO ao atualizar relatorios: " + e.getMessage());
@@ -2036,51 +2114,84 @@ public class Principal extends javax.swing.JFrame {
     }
     
     
-    public void gerarGraficoPizza() {
+    
+    
+    public void gerarGraficoStatusOS() {
 
-        // ====== FUNÇÃO PARA LIMPAR VALORES ======
+        int abertas     = Integer.parseInt(lblTotalAbertas.getText());
+        int andamento   = Integer.parseInt(lblTotalAndamento.getText());
+        int concluidas  = Integer.parseInt(lblTotalConcluidas.getText());
+        int canceladas  = Integer.parseInt(lblTotalCanceladas.getText());
+
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("Abertas", abertas);
+        dataset.setValue("Em Andamento", andamento);
+        dataset.setValue("Concluídas", concluidas);
+        dataset.setValue("Canceladas", canceladas);
+
+        JFreeChart chart = ChartFactory.createPieChart(
+            "Distribuição das O.S por Status",
+            dataset,
+            true,
+            true,
+            false
+        );
+
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setPreferredSize(panelGraficoTotalValor.getSize());
+
+        panelGraficoTotalStatus.removeAll();
+        panelGraficoTotalStatus.setLayout(new BorderLayout());
+        panelGraficoTotalStatus.add(chartPanel, BorderLayout.CENTER);
+        panelGraficoTotalStatus.revalidate();
+        panelGraficoTotalStatus.repaint();
+    }
+    
+    public void gerarGraficoValoresOS() {
+
+        // Função segura para converter "R$ 1.234,56" → double
         Function<String, Double> parseValor = (txt) -> {
             try {
-                String v = txt.replace("R$", "").replace(".", "").replace(",", ".").trim();
-                return Double.parseDouble(v);
+                return Double.parseDouble(
+                    txt.replace("R$", "")
+                       .replace(".", "")
+                       .replace(",", ".")
+                       .trim()
+                );
             } catch (Exception e) {
                 return 0.0;
             }
         };
 
-        // ====== PEGANDO VALORES ======
-        int abertas = Integer.parseInt(lblTotalAbertas.getText());
-        int andamento = Integer.parseInt(lblTotalAndamento.getText());
-        int concluidas = Integer.parseInt(lblTotalConcluidas.getText());
 
-        double valorTotal = parseValor.apply(lblValorTotal.getText());
-        double valorPendente = parseValor.apply(lblValorPendente.getText());
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        dataset.setValue("Valor Total", valorTotalOS);
+        dataset.setValue("Valor Pendente", valorPendenteOS);
+        
+        System.out.println("TOTAL: " + valorTotalOS);
+        System.out.println("PENDENTE: " + valorPendenteOS);
 
-        // ====== MONTANDO DATASET DO GRÁFICO DE PIZZA ======
-        DefaultPieDataset dados = new DefaultPieDataset();
-        dados.setValue("Abertas (" + abertas + ")", abertas);
-        dados.setValue("Em Andamento (" + andamento + ")", andamento);
-        dados.setValue("Concluídas (" + concluidas + ")", concluidas);
-        dados.setValue("Valor Total (R$ " + valorTotal + ")", valorTotal);
-        dados.setValue("Valor Pendente (R$ " + valorPendente + ")", valorPendente);
 
-        // ====== CRIANDO O GRÁFICO ======
-        JFreeChart grafico = ChartFactory.createPieChart(
-                "Distribuição Geral das Ordens de Serviço",
-                dados,
-                true,
-                true,
-                false
+        JFreeChart chart = ChartFactory.createPieChart(
+            "Distribuição Financeira das O.S",
+            dataset,
+            true,
+            true,
+            false
         );
 
-        ChartPanel panel = new ChartPanel(grafico);
-        panel.setSize(jpanelGrafico.getWidth(), jpanelGrafico.getHeight());
-        panel.setVisible(true);
+        ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setMouseWheelEnabled(true);
+        chartPanel.setPreferredSize(panelGraficoTotalValor.getSize());
 
-        jpanelGrafico.removeAll();
-        jpanelGrafico.add(panel);
-        jpanelGrafico.revalidate();
-        jpanelGrafico.repaint();
+        panelGraficoTotalValor.removeAll();
+        panelGraficoTotalValor.setLayout(new BorderLayout());
+        panelGraficoTotalValor.add(chartPanel, BorderLayout.CENTER);
+        panelGraficoTotalValor.revalidate();
+        panelGraficoTotalValor.repaint();
     }
+
+
 
 }

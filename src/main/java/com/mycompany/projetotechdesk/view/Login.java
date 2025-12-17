@@ -59,7 +59,7 @@ public class Login extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         imagePanel1.setBackground(new java.awt.Color(204, 204, 255));
-        imagePanel1.setImage(new javax.swing.ImageIcon("C:\\Users\\carlo\\Pictures\\trabalho final\\fundo do fundo azul .png")); // NOI18N
+        imagePanel1.setImage(new javax.swing.ImageIcon(getClass().getResource("/img/fundo do fundo azul .png"))); // NOI18N
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 153, 255)));
@@ -147,7 +147,7 @@ public class Login extends javax.swing.JFrame {
         );
 
         imagePanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
-        imagePanel2.setImage(new javax.swing.ImageIcon("C:\\Users\\carlo\\Pictures\\trabalho final\\fundo azul meio.png")); // NOI18N
+        imagePanel2.setImage(new javax.swing.ImageIcon(getClass().getResource("/img/fundo azul meio.png"))); // NOI18N
         imagePanel2.setMinimumSize(new java.awt.Dimension(320, 440));
         imagePanel2.setPreferredSize(new java.awt.Dimension(320, 440));
 
@@ -172,21 +172,22 @@ public class Login extends javax.swing.JFrame {
         imagePanel2Layout.setHorizontalGroup(
             imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(imagePanel2Layout.createSequentialGroup()
-                .addGap(39, 39, 39)
                 .addGroup(imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(imagePanel2Layout.createSequentialGroup()
+                        .addGap(39, 39, 39)
+                        .addGroup(imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(imagePanel2Layout.createSequentialGroup()
+                        .addGap(131, 131, 131)
+                        .addComponent(jLabel6)))
                 .addContainerGap(38, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, imagePanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6)
-                .addGap(121, 121, 121))
         );
         imagePanel2Layout.setVerticalGroup(
             imagePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, imagePanel2Layout.createSequentialGroup()
-                .addGap(71, 71, 71)
+                .addGap(76, 76, 76)
                 .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel3)
