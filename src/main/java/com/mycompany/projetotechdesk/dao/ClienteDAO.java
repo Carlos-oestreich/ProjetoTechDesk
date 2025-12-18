@@ -90,8 +90,18 @@ public class ClienteDAO {
         con = Conexao.getConexao();
         if (con == null) return new ArrayList<>();
         
-        // SQL simplificado: busca da VIEW nova que não tem mais endereço
-        String sql = "SELECT * FROM vw_detalhes_clientes WHERE id_empresa = ? ORDER BY nome";
+        
+        String sql = """
+        SELECT 
+            c.id, c.nome, c.cpf,
+            u.id AS id_usuario,
+            ct.id AS id_contato, ct.email, ct.telefone
+        FROM tbl_clientes c
+        INNER JOIN tbl_usuarios u ON c.id_usuario = u.id
+        INNER JOIN tbl_contatos ct ON u.id_contato = ct.id
+        WHERE c.id_empresa = ?
+        ORDER BY c.nome
+    """;
         
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -132,17 +142,15 @@ public class ClienteDAO {
         if (con == null) return null;
 
         String sql = """
-            SELECT 
-                c.id,
-                c.nome,
-                c.cpf,
-                ct.id AS id_contato,
-                ct.email,
-                ct.telefone
-            FROM tbl_clientes c
-            LEFT JOIN tbl_contatos ct ON c.id_contato = ct.id
-            WHERE c.id = ?
-        """;
+        SELECT 
+            c.id, c.nome, c.cpf,
+            u.id AS id_usuario,
+            ct.id AS id_contato, ct.email, ct.telefone
+        FROM tbl_clientes c
+        INNER JOIN tbl_usuarios u ON c.id_usuario = u.id
+        INNER JOIN tbl_contatos ct ON u.id_contato = ct.id
+        WHERE c.id = ?
+    """;
 
         PreparedStatement stmt = null;
         ResultSet rs = null;

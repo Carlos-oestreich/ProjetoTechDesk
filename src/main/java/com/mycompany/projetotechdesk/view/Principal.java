@@ -15,6 +15,7 @@ import com.mycompany.projetotechdesk.dao.OrdemServicoDAO;
 import com.mycompany.projetotechdesk.dao.TecnicoDAO;
 import com.mycompany.projetotechdesk.database.Conexao;
 import com.mycompany.projetotechdesk.util.RelatorioUtil;
+import static com.sun.java.accessibility.util.SwingEventMonitor.addDocumentListener;
 import java.awt.BorderLayout;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -32,6 +33,8 @@ import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -47,6 +50,7 @@ public class Principal extends javax.swing.JFrame {
     public Principal() {
         this.setUndecorated(true);
         initComponents();
+        configurarCalculoAutomatico();
         this.setLocationRelativeTo(null); 
         this.setResizable(false); 
         
@@ -82,6 +86,7 @@ public class Principal extends javax.swing.JFrame {
     public Principal(Usuario usuario){
         this.setUndecorated(true);
         initComponents();
+        configurarCalculoAutomatico();
         this.setLocationRelativeTo(null); 
         this.setResizable(false); 
         
@@ -178,7 +183,6 @@ public class Principal extends javax.swing.JFrame {
         FtdDataEntradaOS = new javax.swing.JFormattedTextField();
         ftdDataSaidaOS = new javax.swing.JFormattedTextField();
         jLabel28 = new javax.swing.JLabel();
-        txtValorTotalOS = new Componentes.TextField();
         jLabel29 = new javax.swing.JLabel();
         txtValorPecasOS = new Componentes.TextField();
         jLabel30 = new javax.swing.JLabel();
@@ -187,6 +191,7 @@ public class Principal extends javax.swing.JFrame {
         btnExcluirOS = new Componentes.RoundedButton();
         txtValorMaoDeObraOS = new Componentes.TextField();
         jLabel36 = new javax.swing.JLabel();
+        txtValorTotalOS = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblRelatorioOS = new javax.swing.JTable();
         roundedPanel13 = new Componentes.RoundedPanel();
@@ -619,8 +624,8 @@ public class Principal extends javax.swing.JFrame {
                 .addComponent(roundedPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(imagePanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(roundedPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE))
+                    .addComponent(roundedPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE))
                 .addContainerGap())
         );
         imagePanel3Layout.setVerticalGroup(
@@ -698,8 +703,6 @@ public class Principal extends javax.swing.JFrame {
         jLabel28.setForeground(new java.awt.Color(8, 118, 132));
         jLabel28.setText("Valor Mão De Obra (R$):");
 
-        txtValorTotalOS.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
         jLabel29.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel29.setForeground(new java.awt.Color(8, 118, 132));
         jLabel29.setText("Peças (R$):");
@@ -738,10 +741,20 @@ public class Principal extends javax.swing.JFrame {
         });
 
         txtValorMaoDeObraOS.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        txtValorMaoDeObraOS.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtValorMaoDeObraOSKeyPressed(evt);
+            }
+        });
 
         jLabel36.setFont(new java.awt.Font("Serif", 1, 24)); // NOI18N
         jLabel36.setForeground(new java.awt.Color(8, 118, 132));
         jLabel36.setText("Cadastrar Nova Ordem de Serviço");
+
+        txtValorTotalOS.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        txtValorTotalOS.setText("0");
+        txtValorTotalOS.setToolTipText("");
+        txtValorTotalOS.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204), 2));
 
         javax.swing.GroupLayout roundedPanel5Layout = new javax.swing.GroupLayout(roundedPanel5);
         roundedPanel5.setLayout(roundedPanel5Layout);
@@ -765,28 +778,21 @@ public class Principal extends javax.swing.JFrame {
                                     .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(cbxTecnicoOS, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jLabel30)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel5Layout.createSequentialGroup()
-                                .addComponent(btnSalvarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnEditarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnExcluirOS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane5)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel5Layout.createSequentialGroup()
                                 .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel5Layout.createSequentialGroup()
                                         .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addGroup(roundedPanel5Layout.createSequentialGroup()
+                                                .addComponent(txtValorMaoDeObraOS, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addGap(84, 84, 84))
+                                            .addGroup(roundedPanel5Layout.createSequentialGroup()
                                                 .addGap(0, 0, Short.MAX_VALUE)
                                                 .addComponent(jLabel28, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(31, 31, 31))
-                                            .addGroup(roundedPanel5Layout.createSequentialGroup()
-                                                .addComponent(txtValorMaoDeObraOS, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                .addGap(44, 44, 44))
-                                            .addGroup(roundedPanel5Layout.createSequentialGroup()
-                                                .addComponent(txtValorTotalOS, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                .addGap(44, 44, 44)))
-                                        .addGap(40, 40, 40)
+                                                .addGap(71, 71, 71))
+                                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, roundedPanel5Layout.createSequentialGroup()
+                                                .addComponent(txtValorTotalOS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGap(84, 84, 84)))
                                         .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                             .addComponent(jLabel26, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(FtdDataEntradaOS, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -800,7 +806,13 @@ public class Principal extends javax.swing.JFrame {
                                             .addComponent(jLabel27)
                                             .addComponent(ftdDataSaidaOS, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(9, 9, 9))))
+                                .addGap(9, 9, 9))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, roundedPanel5Layout.createSequentialGroup()
+                                .addComponent(btnSalvarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnEditarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnExcluirOS, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(roundedPanel5Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addComponent(jLabel36)))
@@ -847,15 +859,14 @@ public class Principal extends javax.swing.JFrame {
                                 .addComponent(jLabel25, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(FtdDataEntradaOS, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(5, 5, 5)
-                .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(roundedPanel5Layout.createSequentialGroup()
-                        .addComponent(txtValorTotalOS, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32)
-                        .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnEditarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnExcluirOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnSalvarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(cbxStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(cbxStatus, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(txtValorTotalOS, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addGroup(roundedPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnEditarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExcluirOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSalvarOS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10))
         );
 
@@ -933,7 +944,7 @@ public class Principal extends javax.swing.JFrame {
                         .addGroup(imagePanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 625, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, 624, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
         imagePanel4Layout.setVerticalGroup(
             imagePanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1216,7 +1227,7 @@ public class Principal extends javax.swing.JFrame {
                 .addGroup(roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(panelGraficoTotalStatus, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(panelGraficoTotalValor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(163, Short.MAX_VALUE))
+                .addContainerGap(135, Short.MAX_VALUE))
         );
         roundedPanel2Layout.setVerticalGroup(
             roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1251,7 +1262,7 @@ public class Principal extends javax.swing.JFrame {
         imagePanel6.setLayout(imagePanel6Layout);
         imagePanel6Layout.setHorizontalGroup(
             imagePanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1127, Short.MAX_VALUE)
+            .addComponent(roundedPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 1099, Short.MAX_VALUE)
         );
         imagePanel6Layout.setVerticalGroup(
             imagePanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1301,7 +1312,7 @@ public class Principal extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(imagePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(imagePanel1Layout.createSequentialGroup()
-                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1288, Short.MAX_VALUE)
+                        .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1260, Short.MAX_VALUE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(imagePanel1Layout.createSequentialGroup()
                         .addComponent(btnSair, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1346,7 +1357,8 @@ public class Principal extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    
     private void btnMinimizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMinimizarActionPerformed
         this.setState(javax.swing.JFrame.ICONIFIED);
     }//GEN-LAST:event_btnMinimizarActionPerformed
@@ -1369,7 +1381,7 @@ public class Principal extends javax.swing.JFrame {
 
         int idOS = (int) tblRelatorioOS.getValueAt(linha, 0);
 
-        int confirm = JOptionPane.showConfirmDialog(this, "Excluir O.S. " + idOS + "?");
+        int confirm = JOptionPane.showConfirmDialog(this, "Excluir O.S. " + idOS + "?", "CONFIRMAÇÂO", JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 osDAO.excluir(idOS, usuarioLogado.getEmpresa().getId());
@@ -1817,6 +1829,10 @@ public class Principal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_btnImprimirActionPerformed
 
+    private void txtValorMaoDeObraOSKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorMaoDeObraOSKeyPressed
+        calcularTotalAutomatico();
+    }//GEN-LAST:event_txtValorMaoDeObraOSKeyPressed
+
     /**
      * @param args the command line arguments
      */
@@ -1936,10 +1952,13 @@ public class Principal extends javax.swing.JFrame {
     private Componentes.TextField txtTelefoneTecnico;
     private Componentes.TextField txtValorMaoDeObraOS;
     private Componentes.TextField txtValorPecasOS;
-    private Componentes.TextField txtValorTotalOS;
+    private javax.swing.JLabel txtValorTotalOS;
     // End of variables declaration//GEN-END:variables
 
 
+    
+    
+    
     private void aplicarPermissoes() {
         if (usuarioLogado != null && "tecnico".equalsIgnoreCase(usuarioLogado.getRole())) {
             if (jTabbedPane1.getTabCount() > 3) jTabbedPane1.setEnabledAt(3, false);
@@ -2192,6 +2211,51 @@ public class Principal extends javax.swing.JFrame {
         panelGraficoTotalValor.repaint();
     }
 
+    
+    
 
+    private void calcularTotalAutomatico() {
+        try {
+            // Pega o texto
+            String maoStr = txtValorMaoDeObraOS.getText();
+            String pecaStr = txtValorPecasOS.getText();
 
+            System.out.println("Texto bruto Mão de Obra: " + maoStr); // DEBUG
+
+            // Limpa tudo que não for número ou vírgula/ponto (remove R$, espaços, letras)
+            // Isso previne erro se você estiver usando máscara de dinheiro
+            maoStr = maoStr.replaceAll("[^0-9,.]", "").replace(",", ".");
+            pecaStr = pecaStr.replaceAll("[^0-9,.]", "").replace(",", ".");
+
+            // Converte (se vazio, vira 0)
+            double maoObra = maoStr.isEmpty() ? 0.0 : Double.parseDouble(maoStr);
+            double pecas = pecaStr.isEmpty() ? 0.0 : Double.parseDouble(pecaStr);
+
+            // Soma e exibe
+            double total = maoObra + pecas;
+
+            // Exibe formatado com 2 casas
+            txtValorTotalOS.setText(String.format("%.2f", total));
+
+            System.out.println("Calculou: " + total); // DEBUG
+
+        } catch (Exception e) {
+            System.out.println("Erro no cálculo: " + e.getMessage());
+            e.printStackTrace(); // Mostra o erro exato no console
+        }
+    }
+
+    private void configurarCalculoAutomatico() {
+        txtValorMaoDeObraOS.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+            public void removeUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+            public void changedUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+        });
+
+        txtValorPecasOS.getTextField().getDocument().addDocumentListener(new DocumentListener() {
+            public void insertUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+            public void removeUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+            public void changedUpdate(DocumentEvent e) { calcularTotalAutomatico(); }
+        });
+    }
 }

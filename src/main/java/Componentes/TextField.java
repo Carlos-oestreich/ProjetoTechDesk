@@ -433,4 +433,6 @@ public class TextField extends JPanel {
     // Acesso direto aos campos, se precisar
     public JTextField getTextField() { return tf; }
     public JPasswordField getPasswordField() { return pf; }
+    
+    
 }

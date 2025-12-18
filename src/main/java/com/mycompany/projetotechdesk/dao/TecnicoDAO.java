@@ -143,33 +143,33 @@ public class TecnicoDAO {
             stmt.close();
             
             // 3. BUSCA O ID DO CONTATO (Para apagar o login)
-            String sqlBuscaContato = "SELECT id_contato FROM tbl_tecnicos WHERE id = ?";
-            stmt = con.prepareStatement(sqlBuscaContato);
+            String sqlBuscaUser = "SELECT id_usuario FROM tbl_tecnicos WHERE id = ?";
+            stmt = con.prepareStatement(sqlBuscaUser);
             stmt.setInt(1, idTecnico);
             rs = stmt.executeQuery();
             
-            int idContato = 0;
+            int idUsuario = 0;
             if (rs.next()) {
-                idContato = rs.getInt("id_contato");
+                idUsuario = rs.getInt("id_usuario");
             }
             rs.close();
             stmt.close();
             
             // 4. EXCLUI O USUÁRIO DE LOGIN
-            if (idContato > 0) {
-                String sqlDelUser = "DELETE FROM tbl_usuarios WHERE id_contato = ?";
+            if (idUsuario > 0) {
+                String sqlDelUser = "DELETE FROM tbl_usuarios WHERE id = ?";
                 stmt = con.prepareStatement(sqlDelUser);
-                stmt.setInt(1, idContato);
+                stmt.setInt(1, idUsuario);
                 stmt.executeUpdate();
-                stmt.close();
+            } else {
+                // Caso de segurança: se não achou usuário, tenta apagar só o técnico
+                String sqlDelTec = "DELETE FROM tbl_tecnicos WHERE id = ?";
+                stmt = con.prepareStatement(sqlDelTec);
+                stmt.setInt(1, idTecnico);
+                stmt.executeUpdate();
             }
 
-            // 5. EXCLUI O TÉCNICO
-            String sqlDelTec = "DELETE FROM tbl_tecnicos WHERE id = ? AND id_empresa = ?";
-            stmt = con.prepareStatement(sqlDelTec);
-            stmt.setInt(1, idTecnico);
-            stmt.setInt(2, idEmpresa);
-            stmt.executeUpdate();
+            
             
         } catch (SQLException e){
             System.out.println("ERRO ao deletar tecnico -> " + e.getMessage());
@@ -193,12 +193,16 @@ public class TecnicoDAO {
             return new ArrayList<>();
         }
 
-        String sql = "SELECT "
-                + "t.id AS tecnico_id, t.nome, t.especialidade, "
-                + "ct.id AS contato_id, ct.email, ct.telefone "
-                + "FROM tbl_tecnicos t "
-                + "LEFT JOIN tbl_contatos ct ON t.id_contato = ct.id "
-                + "WHERE t.id_empresa = ?";
+        String sql = """
+            SELECT 
+                t.id AS tecnico_id, t.nome, t.especialidade,
+                u.id AS id_usuario,
+                ct.id AS contato_id, ct.email, ct.telefone 
+            FROM tbl_tecnicos t 
+            INNER JOIN tbl_usuarios u ON t.id_usuario = u.id
+            INNER JOIN tbl_contatos ct ON u.id_contato = ct.id 
+            WHERE t.id_empresa = ?
+        """;
 
         PreparedStatement stmt = null;
         ResultSet rs = null;
