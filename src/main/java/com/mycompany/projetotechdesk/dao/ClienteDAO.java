@@ -42,29 +42,43 @@ public class ClienteDAO {
     }
     
     public void atualizar(Cliente cliente) throws SQLException{
+   
         con = Conexao.getConexao();
-        if(con == null) return;
-        
-        // Procedure atualizada para 6 parametros (sem endereço)
-        String sql = "CALL sp_atualizar_cliente(?, ?, ?, ?, ?, ?)";
-        PreparedStatement stmt = null;
-        
-        try {
-            stmt = con.prepareStatement(sql);
+        if (con == null) return;
+
+        // O erro acontecia porque antes estava enviando 6 coisas (?,?,?,?,?,?)
+        // Agora deixamos apenas 5: ID, Nome, CPF, Email, Telefone
+        String sql = "CALL sp_atualizar_cliente(?, ?, ?, ?, ?)";
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+            // 1. ID do Cliente (Inteiro)
             stmt.setInt(1, cliente.getId());
-            stmt.setInt(2, cliente.getContato().getId());
-            stmt.setString(3, cliente.getNome());
-            stmt.setString(4, cliente.getCpf());
-            stmt.setString(5, cliente.getContato().getEmail());
-            stmt.setString(6, cliente.getContato().getTelefone());
             
+            // 2. Nome (Texto)
+            stmt.setString(2, cliente.getNome());
+            
+            // 3. CPF (Texto)
+            stmt.setString(3, cliente.getCpf());
+            
+            // 4. Email e 5. Telefone (Textos)
+            if (cliente.getContato() != null) {
+                stmt.setString(4, cliente.getContato().getEmail());
+                stmt.setString(5, cliente.getContato().getTelefone());
+            } else {
+                stmt.setString(4, "");
+                stmt.setString(5, "");
+            }
+
             stmt.execute();
-        } catch (SQLException e){
-            System.out.println("ERRO upd cliente: " + e.getMessage());
-            throw e;
+            
+        } catch (SQLException e) {
+            if (e.getMessage().contains("unq_cpf")) {
+                throw new SQLException("Este CPF já está em uso por outro cliente!");
+            } else {
+                throw e; 
+            }
         } finally {
-            if(stmt != null) stmt.close();
-            if(con != null) con.close();
+            con.close();
         }
     }
     

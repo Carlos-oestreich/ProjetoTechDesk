@@ -294,52 +294,56 @@ public class TelaEndereco extends javax.swing.JFrame {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
                                           
+        
         try {
+            // Validação simples (opcional)
+            if (txtLogradouro.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "O logradouro é obrigatório.");
+                return;
+            }
+
             Endereco e = new Endereco();
             
-            if(modoEdicao == false) {
-                e.setDescricao(txtDescricao.getText());
-                e.setLogradouro(txtLogradouro.getText());
-                e.setNumero(txtNumero.getText());
-                e.setBairro(txtBairro.getText());
-                e.setCidade(txtCidade.getText());
+            // Dados comuns para Salvar ou Atualizar
+            e.setDescricao(txtDescricao.getText()); // Essa linha precisa valer para os dois casos!
+            e.setLogradouro(txtLogradouro.getText());
+            e.setNumero(txtNumero.getText());
+            e.setBairro(txtBairro.getText());
+            e.setCidade(txtCidade.getText());
+            if (cbxEstado.getSelectedItem() != null) {
                 e.setEstado(cbxEstado.getSelectedItem().toString());
-                e.setCep(txtCep.getText());
+            } else {
+                e.setEstado("");
+            }
+            e.setCep(txtCep.getText());
 
+            if (modoEdicao == false) {
+                // ---- NOVO ----
                 dao.adicionar(e, idUsuario);
-
                 JOptionPane.showMessageDialog(null, "Endereço salvo com sucesso!");
-            }else{
-                // ---- ATUALIZAR ENDEREÇO EXISTENTE ----
-               
+            } else {
+                // ---- ATUALIZAR ----
                 e.setId(Integer.parseInt(enderecoSelecionado));
-                e.setLogradouro(txtLogradouro.getText());
-                e.setNumero(txtNumero.getText());
-                e.setBairro(txtBairro.getText());
-                e.setCidade(txtCidade.getText());
-                e.setEstado(cbxEstado.getSelectedItem().toString());
-                e.setCep(txtCep.getText());
-
                 dao.atualizar(e);
                 JOptionPane.showMessageDialog(null, "Endereço atualizado com sucesso!");
             }
             
-            limpar();
-            atualizarTabela();
+            limpar();          // Limpa a tela APÓS salvar
+            atualizarTabela(); // Recarrega a tabela com os dados novos
             modoEdicao = false;
             btnSalvar.setText("Salvar");
             
-            
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Erro ao salvar: " + ex.getMessage());
+            ex.printStackTrace();
         }
+    
     
         
 
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-                                               
         int linha = tblEnderecos.getSelectedRow();
 
         if (linha == -1) {
@@ -347,23 +351,60 @@ public class TelaEndereco extends javax.swing.JFrame {
             return;
         }
 
-        enderecoSelecionado = tblEnderecos.getValueAt(linha, 0).toString();
-        
-        modoEdicao = true;
-        btnSalvar.setText("Atualizar");
+        // Função para evitar erro de nulo
+        java.util.function.Function<Object, String> safeStr = obj -> (obj == null) ? "" : obj.toString();
 
-        txtDescricao.setText(tblEnderecos.getValueAt(linha, 1).toString());
-        txtLogradouro.setText(tblEnderecos.getValueAt(linha, 2).toString());
-        txtNumero.setText(tblEnderecos.getValueAt(linha, 3).toString());
-        txtBairro.setText(tblEnderecos.getValueAt(linha, 4).toString());
-        txtCidade.setText(tblEnderecos.getValueAt(linha, 5).toString());
-        txtCep.setText(tblEnderecos.getValueAt(linha, 6).toString());
-        cbxEstado.setSelectedItem(tblEnderecos.getValueAt(linha, 7).toString());
+        try {
+            enderecoSelecionado = safeStr.apply(tblEnderecos.getValueAt(linha, 0));
 
+            // Preenche campos de texto simples
+            txtDescricao.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 1)));
+            txtLogradouro.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 2)));
+            txtNumero.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 3)));
+            txtBairro.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 4)));
+            txtCidade.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 5)));
 
-        atualizarTabela();
-        limpar();
+            // --- CORREÇÃO DA SELEÇÃO DO ESTADO ---
+            // Coluna 6 é o Estado
+            String estadoTabela = safeStr.apply(tblEnderecos.getValueAt(linha, 6)).trim();
+            
+            // 1. Tenta selecionar direto (caso o texto seja idêntico)
+            cbxEstado.setSelectedItem(estadoTabela);
 
+            // 2. Se não selecionou (porque os textos são ligeiramente diferentes), procura na raça
+            String selecionadoAgora = (cbxEstado.getSelectedItem() != null) ? cbxEstado.getSelectedItem().toString() : "";
+            
+            if (!estadoTabela.isEmpty() && !selecionadoAgora.equals(estadoTabela)) {
+                // Percorre todos os itens da ComboBox para achar um parecido
+                for (int i = 0; i < cbxEstado.getItemCount(); i++) {
+                    String itemLista = cbxEstado.getItemAt(i);
+                    
+                    if (itemLista != null) {
+                        String itemLimpo = itemLista.trim().toUpperCase(); // Ex: "PARANÁ - PR"
+                        String tabelaLimpo = estadoTabela.toUpperCase();   // Ex: "PR" ou "PARANA"
+                        
+                        // Verifica se um contém o outro (Resolve "PR" vs "Paraná - PR")
+                        if (itemLimpo.equals(tabelaLimpo) || 
+                            itemLimpo.contains(tabelaLimpo) || 
+                            tabelaLimpo.contains(itemLimpo)) {
+                            
+                            cbxEstado.setSelectedIndex(i);
+                            break; // Achou! Para o loop.
+                        }
+                    }
+                }
+            }
+            
+            // Coluna 7 é o CEP
+            txtCep.setText(safeStr.apply(tblEnderecos.getValueAt(linha, 7)));
+
+            modoEdicao = true;
+            btnSalvar.setText("Atualizar");
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar dados: " + e.getMessage());
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
@@ -469,16 +510,23 @@ public class TelaEndereco extends javax.swing.JFrame {
     btnSalvar.setText("Salvar");
     }
 
-    private void atualizarTabela() {
+   private void atualizarTabela() {
         try {
             List<Endereco> lista = dao.listarPorUsuario(idUsuario);
 
+            // AQUI ESTÁ O SEGREDO: Criamos o modelo sobrescrevendo o isCellEditable
+            // Isso garante que NENHUMA célula seja editável, nunca.
             DefaultTableModel model = new DefaultTableModel(
                 new String[]{
                     "ID", "Descrição", "Logradouro", "Número",
                     "Bairro", "Cidade", "Estado", "CEP"
                 }, 0
-            );
+            ) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // RETORNA FALSE SEMPRE = BLOQUEIA EDIÇÃO
+                }
+            };
 
             for (Endereco e : lista) {
                 model.addRow(new Object[]{
@@ -495,31 +543,9 @@ public class TelaEndereco extends javax.swing.JFrame {
 
             tblEnderecos.setModel(model);
 
-            tblEnderecos.getSelectionModel().addListSelectionListener(event -> {
-                if (!event.getValueIsAdjusting() && tblEnderecos.getSelectedRow() != -1) {
-                    carregarCamposParaEdicao();
-                }
-            });
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Erro ao carregar tabela: " + e.getMessage());
         }
     }
-    
-    
-    private void carregarCamposParaEdicao() {
-    int row = tblEnderecos.getSelectedRow();
-    if (row == -1) return;
-
-    txtLogradouro.setText(tblEnderecos.getValueAt(row, 2).toString());
-    txtNumero.setText(tblEnderecos.getValueAt(row, 3).toString());
-    txtBairro.setText(tblEnderecos.getValueAt(row, 4).toString());
-    txtCidade.setText(tblEnderecos.getValueAt(row, 5).toString());
-    cbxEstado.setSelectedItem(tblEnderecos.getValueAt(row, 6).toString());
-    txtCep.setText(tblEnderecos.getValueAt(row, 7).toString());
-
-    enderecoSelecionado = tblEnderecos.getValueAt(row, 0).toString();
-}
-
     
 }

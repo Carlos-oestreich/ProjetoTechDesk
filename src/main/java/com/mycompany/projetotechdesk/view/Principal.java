@@ -1623,77 +1623,92 @@ public class Principal extends javax.swing.JFrame {
 
     private void btnSalvarTecnicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarTecnicoActionPerformed
         try {
-            //validaçao dos itens obrigatorios
-            if (txtNomeTecnico.getText().trim().isEmpty() ||
+            // 1. VALIDAÇÃO DOS CAMPOS OBRIGATÓRIOS
+            // Como o Login é o Email, validamos apenas o Email
+            if (txtNomeTecnico.getText().trim().isEmpty() || 
                 txtEmailTecnico.getText().trim().isEmpty()) {
 
-                JOptionPane.showMessageDialog(this,
-                    "Preencha os campos obrigatórios:\n- Nome\n- Email",
-                    "Campos Obrigatórios",
+                JOptionPane.showMessageDialog(this, 
+                    "Preencha os campos obrigatórios:\n- Nome\n- Email", 
+                    "Campos Obrigatórios", 
                     JOptionPane.WARNING_MESSAGE);
-                return; // Para a execução aqui se faltar algo
+                return;
             }
 
+            // Validação da Especialidade
             if (cbxEspecialidade.getSelectedIndex() <= 0) {
                 JOptionPane.showMessageDialog(this, "Selecione uma Especialidade.", "Aviso", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            //validação da senha
-            String senha = "";
+            // 2. TRATAMENTO DA SENHA
+            String senhaDigitada = "";
             if (pwdSenhaTecnico != null) {
-                senha = new String(pwdSenhaTecnico.getPassword());
+                senhaDigitada = new String(pwdSenhaTecnico.getPassword());
             }
 
-            // Se for NOVO cadastro, senha é obrigatória
-            if (tecnicoSelecionado == null && senha.trim().isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Defina uma senha para o login do técnico.", "Senha Obrigatória", JOptionPane.WARNING_MESSAGE);
+            // Se for NOVO cadastro, a senha é obrigatória
+            if (tecnicoSelecionado == null && senhaDigitada.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Defina uma senha para o técnico.", "Senha Obrigatória", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            //prepara os objetos
+            // 3. PREPARAÇÃO DOS OBJETOS
             Tecnico tecnico = new Tecnico();
             Contato contato = new Contato();
-            
 
-            //se for edição, recupera IDs
+            // Se for EDIÇÃO, recupera os IDs e a senha antiga
             if (tecnicoSelecionado != null) {
                 tecnico.setId(tecnicoSelecionado.getId());
-                contato.setId(tecnicoSelecionado.getContato().getId());
-                
+                tecnico.setSenha(tecnicoSelecionado.getSenha()); // Mantém a antiga caso não mude
+
+                if (tecnicoSelecionado.getContato() != null) {
+                    contato.setId(tecnicoSelecionado.getContato().getId());
+                }
             }
 
-            //dados do tecnico
+            // 4. PREENCHIMENTO DOS DADOS (AQUI ESTÁ A CORREÇÃO PRINCIPAL)
             tecnico.setEmpresa(usuarioLogado.getEmpresa());
             tecnico.setNome(txtNomeTecnico.getText());
+
+            // --- CORREÇÃO: O LOGIN É O PRÓPRIO EMAIL ---
+            tecnico.setLogin(txtEmailTecnico.getText()); 
+            // -------------------------------------------
+
             tecnico.setEspecialidade(cbxEspecialidade.getSelectedItem() != null ? cbxEspecialidade.getSelectedItem().toString() : "");
 
-            //Dados do contato
+            // Dados do Contato
             contato.setEmail(txtEmailTecnico.getText());
             contato.setTelefone(txtTelefoneTecnico.getText());
             tecnico.setContato(contato);            
 
-            //Salva no Banco
+            // 5. CHAMADA AO BANCO DE DADOS (DAO)
             if (tecnicoSelecionado == null) {
-                // ADICIONAR
-                tecnicoDAO.adicionar(tecnico, senha, usuarioLogado.getEmpresa().getId());
-                JOptionPane.showMessageDialog(this, "Técnico cadastrado!");
+                // --- CADASTRAR NOVO ---
+                // Passamos a senha digitada
+                tecnicoDAO.adicionar(tecnico, senhaDigitada, usuarioLogado.getEmpresa().getId());
+                JOptionPane.showMessageDialog(this, "Técnico cadastrado com sucesso!");
+
             } else {
-                // ATUALIZAR - AGORA PASSANDO A SENHA!
-                // Se a senha estiver vazia (usuário não digitou nada), o DAO envia vazio e o Banco mantém a antiga.
-                tecnicoDAO.atualizar(tecnico, senha);
-                JOptionPane.showMessageDialog(this, "Técnico atualizado!");
+                // --- ATUALIZAR EXISTENTE ---
+                // Passamos a 'senhaDigitada'. O DAO deve ter a lógica:
+                // Se 'senhaDigitada' for vazia, mantém a do banco. Se tiver texto, atualiza.
+                tecnicoDAO.atualizar(tecnico, senhaDigitada);
+                JOptionPane.showMessageDialog(this, "Técnico atualizado com sucesso!");
             }
 
-            //limpa e atualiza
+            // 6. LIMPEZA E ATUALIZAÇÃO DA TELA
             limparFormularioTecnico();
             atualizarTabelaTecnico();
-            preencherCombosOS();
+
+            // Se houver combos de OS dependentes deste técnico, atualize-os também
+            // preencherCombosOS(); 
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "ERRO ao salvar: " + e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace(); // Ajuda a ver o erro no console se houver
         }
+
     }//GEN-LAST:event_btnSalvarTecnicoActionPerformed
 
     private void tblClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClienteMouseClicked

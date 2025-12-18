@@ -56,53 +56,53 @@ public class TecnicoDAO {
     
     //atualizar tecnico
     public void atualizar(Tecnico tecnico, String senha) throws SQLException {
-        
         con = Conexao.getConexao();
-        
-        if (con == null) {
-            System.out.println("ERRO DAO: conexao com o banco nula ao atualizar tecnico");
-            return;
-        }
-        
-        String sql = "CALL sp_atualizar_tecnico(?, ?, ?, ?, ?, ?, ?)";
-        PreparedStatement stmt = null;
-        
-        try {
-            stmt = con.prepareStatement(sql);
-            
-            //IDs de referencia
-            stmt.setInt(1, tecnico.getId());
-            stmt.setInt(2, tecnico.getContato().getId());
-            
-            //novos dados do tecnico
-            stmt.setString(3, tecnico.getNome());
-            stmt.setString(4, tecnico.getEspecialidade());
-            
-            //novos dados de contato
-            stmt.setString(5, tecnico.getContato().getEmail());
-            stmt.setString(6, tecnico.getContato().getTelefone());
-            
-            stmt.setString(7, senha);
+        if (con == null) throw new SQLException("Sem conexão.");
 
-            
+        // NOTA: Agora são 7 pontos de interrogação!
+        // 1:ID, 2:Nome, 3:Login, 4:Senha, 5:Email, 6:Telefone, 7:Especialidade
+        String sql = "CALL sp_atualizar_tecnico(?, ?, ?, ?, ?, ?, ?)"; 
+
+        try (PreparedStatement stmt = con.prepareStatement(sql)) {
+
+            // 1 a 6 (Iguais ao que já tínhamos)
+            stmt.setInt(1, tecnico.getId());
+            stmt.setString(2, tecnico.getNome());
+            stmt.setString(3, tecnico.getLogin()); // Lembra que setamos isso como Email no botão
+
+            // Lógica da Senha
+            if (senha != null && !senha.trim().isEmpty()) {
+                 stmt.setString(4, senha); 
+            } else {
+                 stmt.setString(4, tecnico.getSenha());
+            }
+
+            // Contatos
+            if (tecnico.getContato() != null) {
+                stmt.setString(5, tecnico.getContato().getEmail());
+                stmt.setString(6, tecnico.getContato().getTelefone());
+            } else {
+                stmt.setNull(5, java.sql.Types.VARCHAR);
+                stmt.setNull(6, java.sql.Types.VARCHAR);
+            }
+
+            // --- 7. ESPECIALIDADE (NOVO) ---
+            stmt.setString(7, tecnico.getEspecialidade()); 
+            // -------------------------------
+
             stmt.execute();
-            
-        } catch (SQLException e){
-            
-            System.out.println("ERRO, ao tentar atualizar tecnico -> " + e.getMessage());
-            
-        }finally{
-            
-            if (stmt != null){
-                stmt.close();
+
+        } catch (SQLException e) {
+            if (e.getMessage().contains("unq_usuario_login")) {
+                throw new SQLException("Este Login/Email já está em uso!");
+            } else {
+                throw e; 
             }
-            if (con != null){
-                con.close();
-                System.out.println("Banco fechado com sucesso (atualizar tecnico)");
-            }
+        } finally {
+            // Feche a conexão se necessário
+            if (con != null) con.close();
         }
     }
-    
     
     //exclui um tecnico
     public void excluir(int idTecnico, int idEmpresa) throws SQLException {

@@ -17,6 +17,9 @@ public class Tecnico {
     private Contato contato;
     private Endereco endereco;
     private Empresa empresa;
+    
+    private String login;
+    private String senha;
 
     public Tecnico() {
         this.contato = new Contato();
@@ -73,6 +76,23 @@ public class Tecnico {
         this.empresa = empresa;
     }
 
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+    
+    
     @Override
     public String toString() {
         return this.nome;
