@@ -1,4 +1,5 @@
-# 🖥️ Projeto TechDesk
+# 🖥️ Projeto TechDesk  
+![Status](https://img.shields.io/badge/status-finalizado-brightgreen)
 
 <p align="center">
   <img src="https://img.shields.io/badge/Java-93.6%25-blue?style=for-the-badge&logo=java">
